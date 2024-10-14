@@ -1,6 +1,7 @@
 package com.move.launcher;
 
 import com.move.model.Cell;
+import com.move.model.Direction;
 import com.move.model.Fruit;
 import com.move.model.Snake;
 import com.move.view.ConsolePrinter;
@@ -8,86 +9,119 @@ import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class SnakeLauncher {
-  private final GlobalKeyboardHook keyboardHook;
-  private final static int WIDTH = 40;
-  private final static int HEIGHT = 12;
-  private final ConsolePrinter printer;
-  private final Scanner scanner;
-  private final Random random;
-  private int direction;
-  private Snake snake;
-  private Fruit fruit;
-
+  private static final int WIDTH = 40;
+  private static final int HEIGHT = 12;
   private static final String GREETING_MESSAGE = """
           WELCOME T0 THE SNAKE GAME!
           
           Rules and gameplay: 
           1. Firstly you need to choose speed of snake: 
-          // from 1 to 5 
+          // 1, 2 or 3 
           2. Press 'W A S D' buttons to choose snake direction. 
           3. Press 'Enter' to launch this game!""";
+
   private static final String GAME_OVER = "Game Over!";
+  private static final String RESTART = "To restart enter '1', otherwise 'Enter' to quit game!";
+  private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook();
+  private final Scanner scanner = new Scanner(System.in);
+  private final Random random = new Random();
+  private Direction direction = Direction.RIGHT;
+  private final ConsolePrinter printer;
+  private Snake snake;
+  private Fruit fruit;
+  private List<Integer> chooseSnakeSpeed = new ArrayList<>(Arrays.asList(0, 250, 300, 400));
 
   public SnakeLauncher() {
-    this.scanner = new Scanner(System.in);
     this.printer = new ConsolePrinter();
-    this.snake = new Snake();
-    this.random = new Random();
+    this.snake = new Snake(WIDTH, HEIGHT);
     this.fruit = new Fruit(random.nextInt(1, WIDTH - 1), random.nextInt(1, HEIGHT - 1));
-    this.keyboardHook = new GlobalKeyboardHook();
-    changeDirection();
   }
 
   public void startConsoleSnake() {
     printer.printLine(GREETING_MESSAGE);
-    scanner.nextLine();
+    int snakeSpeed = getSnakeSpeed();
+    directionListener();
     while (true) {
-      try {
-        Thread.sleep(400);
-      } catch (InterruptedException e) {
-
-      }
-      Cell cell = snake.getSnakeBody().get(0);
-      int snakeX = cell.x();
-      int snakeY = cell.y();
-      switch (direction) {
+      snakeSpeed(snakeSpeed);
+      Cell head = snake.getSnakeBody().get(0);
+      int snakeX = head.x();
+      int snakeY = head.y();
+      switch (direction.getDirection()) {
         case 1 -> snakeY -= 1;
         case 2 -> snakeX -= 1;
         case 3 -> snakeY += 1;
         case 4 -> snakeX += 1;
       }
-      boolean isFruitEaten = cell.x() == fruit.x() && cell.y() == fruit.y();
-      snake.moveSnake(snakeX, snakeY);
-      expandSnakeWhenItAteFruit(isFruitEaten, snakeX, snakeY);
+      boolean isFruitEaten = snakeX == fruit.x() && snakeY == fruit.y();
+      if (gameOver(new Cell(snakeX, snakeY))) {
+        break;
+      }
+      if (isFruitEaten) {
+        snake.expandSnake(snakeX, snakeY);
+        fruit = new Fruit(random.nextInt(1, WIDTH - 1), random.nextInt(1, HEIGHT - 1));
+      } else {
+        snake.moveSnake(snakeX, snakeY);
+      }
+      printer.printLine("");
+      showGameBoard(new Cell(snakeX, snakeY));
       printer.printLine("Score: " + snake.getSnakeBody().size());
-      showGameBoard(cell);
-      if (gameOver(cell)) {break;}
-      System.out.flush();
+    }
+
+  }
+
+  private Integer getSnakeSpeed() {
+    try {
+      int i = 0;
+      while (true) {
+        i = Integer.parseInt(scanner.nextLine());
+        if (i >= 1 && i <= 3) {
+          break;
+        }
+      }
+      return i;
+    } catch (NumberFormatException e) {
+      return 1;
     }
   }
 
-  private void changeDirection() {
+
+  private void snakeSpeed(int speed) {
+    try {
+      Thread.sleep(chooseSnakeSpeed.get(speed));
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  private void directionListener() {
     keyboardHook.addKeyListener(new GlobalKeyAdapter() {
       @Override
       public void keyPressed(GlobalKeyEvent event) {
         char keyChar = event.getKeyChar();
-        switch (String.valueOf(keyChar).toLowerCase()) {
-          case "w" -> direction = 1;
-          case "a" -> direction = 2;
-          case "s" -> direction = 3;
-          case "d" -> direction = 4;
-          default -> {}
-        }
+        direction = switch (String.valueOf(keyChar).toLowerCase()) {
+          case "w" -> direction == Direction.DOWN ? Direction.DOWN : Direction.UP;
+          case "a" -> direction == Direction.RIGHT ? Direction.RIGHT : Direction.LEFT;
+          case "s" -> direction == Direction.UP ? Direction.UP : Direction.DOWN;
+          case "d" -> direction == Direction.LEFT ? Direction.LEFT : Direction.RIGHT;
+          default -> {
+            throw new IllegalArgumentException("Illegal argument!");
+          }
+        };
       }
     });
   }
 
-  private boolean gameOver(Cell cell) {
-    if (cell.x() == 0 || cell.y() == 0 || cell.x() == WIDTH - 1 || cell.y() == HEIGHT - 1) {
+  private boolean gameOver(Cell head) {
+    if (head.x() == 0 || head.y() == 0 || head.x() == WIDTH - 1 || head.y() == HEIGHT - 1) {
+      printer.printLine(GAME_OVER);
+      return true;
+    }
+    List<Cell> snkBody = snake.getSnakeBody().subList(1, snake.getSnakeBody().size());
+    if (snkBody.contains(head)) {
       printer.printLine(GAME_OVER);
       return true;
     }
@@ -116,13 +150,5 @@ public class SnakeLauncher {
       printer.printLine("");
     }
   }
-
-  private void expandSnakeWhenItAteFruit(boolean isFruitEaten, int snakeX, int snakeY) {
-    if (isFruitEaten) {
-      snake.expandSnake(snakeX, snakeY);
-      fruit = new Fruit(random.nextInt(1, WIDTH - 1), random.nextInt(1, HEIGHT - 1));
-    }
-  }
-
 
 }

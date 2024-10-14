@@ -6,11 +6,14 @@ import java.util.List;
 public class Snake {
   private List<Cell> snakeBody;
 
-  public Snake() {
+  public Snake(int width, int height) {
     snakeBody = new ArrayList<>();
-    snakeBody.add(new Cell(10, 7));
-    snakeBody.add(new Cell(9, 7));
+    int x = width / 2;
+    int y = height / 2;
+    snakeBody.add(new Cell(x, y));
+    snakeBody.add(new Cell(x - 1, y));
   }
+
 
   public List<Cell> getSnakeBody() {
     return snakeBody;
@@ -20,6 +23,7 @@ public class Snake {
     snakeBody.add(0, new Cell(snakeX, snakeY));
     snakeBody.remove(snakeBody.size() - 1);
   }
+
 
   public void expandSnake(int snakeX, int snakeY) {
     snakeBody.add(0, new Cell(snakeX, snakeY));
