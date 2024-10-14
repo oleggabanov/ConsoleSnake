@@ -1,9 +1,10 @@
 package com.move.launcher;
 
 import com.move.model.Cell;
-import com.move.model.Direction;
+import com.move.model.enums.SnakeDirection;
 import com.move.model.Fruit;
 import com.move.model.Snake;
+import com.move.model.enums.SnakeSpeed;
 import com.move.view.ConsolePrinter;
 import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
@@ -28,11 +29,11 @@ public class SnakeLauncher {
   private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook();
   private final Scanner scanner = new Scanner(System.in);
   private final Random random = new Random();
-  private Direction direction = Direction.RIGHT;
   private final ConsolePrinter printer;
+  private SnakeDirection snakeDirection = SnakeDirection.RIGHT;
+  private SnakeSpeed snakeSpeed = SnakeSpeed.MEDIUM;
   private Snake snake;
   private Fruit fruit;
-  private List<Integer> chooseSnakeSpeed = new ArrayList<>(Arrays.asList(0, 250, 300, 400));
 
   public SnakeLauncher() {
     this.printer = new ConsolePrinter();
@@ -50,7 +51,7 @@ public class SnakeLauncher {
       Cell head = snake.getSnakeBody().get(0);
       int snakeX = head.x();
       int snakeY = head.y();
-      switch (direction.getDirection()) {
+      switch (snakeDirection.getDirection()) {
         case 1 -> snakeY -= 1;
         case 2 -> snakeX -= 1;
         case 3 -> snakeY += 1;
@@ -71,7 +72,6 @@ public class SnakeLauncher {
       printer.printLine("Score: " + snake.getSnakeBody().size());
       clearConsole();
     }
-
 
 
   }
@@ -102,8 +102,14 @@ public class SnakeLauncher {
 
 
   private void snakeSpeed(int speed) {
+    int snakeSpeed = switch (speed){
+      case 1 -> SnakeSpeed.SLOW.getSpeed();
+      case 2 -> SnakeSpeed.MEDIUM.getSpeed();
+      case 3 -> SnakeSpeed.FAST.getSpeed();
+      default -> throw new NumberFormatException();
+    };
     try {
-      Thread.sleep(chooseSnakeSpeed.get(speed));
+      Thread.sleep(snakeSpeed);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
@@ -115,11 +121,11 @@ public class SnakeLauncher {
       @Override
       public void keyPressed(GlobalKeyEvent event) {
         char keyChar = event.getKeyChar();
-        direction = switch (String.valueOf(keyChar).toLowerCase()) {
-          case "w" -> direction == Direction.DOWN ? Direction.DOWN : Direction.UP;
-          case "a" -> direction == Direction.RIGHT ? Direction.RIGHT : Direction.LEFT;
-          case "s" -> direction == Direction.UP ? Direction.UP : Direction.DOWN;
-          case "d" -> direction == Direction.LEFT ? Direction.LEFT : Direction.RIGHT;
+        snakeDirection = switch (String.valueOf(keyChar).toLowerCase()) {
+          case "w" -> snakeDirection == SnakeDirection.DOWN ? SnakeDirection.DOWN : SnakeDirection.UP;
+          case "a" -> snakeDirection == SnakeDirection.RIGHT ? SnakeDirection.RIGHT : SnakeDirection.LEFT;
+          case "s" -> snakeDirection == SnakeDirection.UP ? SnakeDirection.UP : SnakeDirection.DOWN;
+          case "d" -> snakeDirection == SnakeDirection.LEFT ? SnakeDirection.LEFT : SnakeDirection.RIGHT;
           default -> {
             throw new IllegalArgumentException("Illegal argument!");
           }
