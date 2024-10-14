@@ -69,16 +69,20 @@ public class SnakeLauncher {
       printer.printLine("");
       showGameBoard(new Cell(snakeX, snakeY));
       printer.printLine("Score: " + snake.getSnakeBody().size());
-      try {
-        Thread.sleep(400);
-        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-      } catch (Exception E) {
-        System.out.println(E);
-      }
+      clearConsole();
     }
 
 
 
+  }
+
+  private static void clearConsole() {
+    try {
+      Thread.sleep(250);
+      new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+    } catch (Exception E) {
+      System.out.println(E);
+    }
   }
 
   private Integer getSnakeSpeed() {
