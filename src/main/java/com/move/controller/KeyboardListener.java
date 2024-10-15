@@ -5,25 +5,15 @@ import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 
-public class ConsoleController {
+public class KeyboardListener {
 
   private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook();
+
   private SnakeDirection snakeDirection;
 
-  public ConsoleController() {
+  public KeyboardListener() {
     snakeDirection = SnakeDirection.RIGHT;
   }
-
-
-  public void clearConsole() {
-    try {
-      Thread.sleep(250);
-      new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
 
   public void directionListener() {
     keyboardHook.addKeyListener(new GlobalKeyAdapter() {
@@ -40,7 +30,6 @@ public class ConsoleController {
       }
     });
   }
-
 
   public int getDirection() {
     return snakeDirection.getDirection();

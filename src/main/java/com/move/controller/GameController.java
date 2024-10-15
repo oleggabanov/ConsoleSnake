@@ -3,38 +3,36 @@ package com.move.controller;
 import com.move.model.Cell;
 import com.move.model.Fruit;
 import com.move.model.Snake;
-import com.move.model.enums.SnakeSpeed;
 import com.move.view.GameBoardView;
 
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 public class GameController {
 
   private static final int WIDTH = 40;
   private static final int HEIGHT = 12;
-  private final Scanner scanner = new Scanner(System.in);
   private final Random random = new Random();
   private Snake snake = new Snake(WIDTH, HEIGHT);
   private Fruit fruit = new Fruit(random.nextInt(1, WIDTH - 1), random.nextInt(1, HEIGHT - 1));
-  private ConsoleController console = new ConsoleController();
+  private KeyboardListener listener = new KeyboardListener();
   private GameBoardView boardView = new GameBoardView(WIDTH, HEIGHT, snake, fruit);
+  private GameSpeedController speedController = new GameSpeedController();
 
   public void startConsoleSnake() {
     boardView.printGreetingMessage();
-    console.directionListener();
-    int speed = getSnakeSpeed();
+    speedController.getSnakeSpeed();
+    listener.directionListener();
     while (true) {
-      stepDelay(speed);
+      speedController.delay();
       Cell head = snake.getSnakeBody().get(0);
       int snakeX = head.x();
       int snakeY = head.y();
-      switch (console.getDirection()) {
-        case 1 -> snakeY -= 1;
-        case 2 -> snakeX -= 1;
-        case 3 -> snakeY += 1;
-        case 4 -> snakeX += 1;
+      switch (listener.getDirection()) {
+        case 1 -> snakeY--;
+        case 2 -> snakeX--;
+        case 3 -> snakeY++;
+        case 4 -> snakeX++;
       }
       boolean isFruitEaten = snakeX == fruit.x() && snakeY == fruit.y();
       if (isGameOver(new Cell(snakeX, snakeY))) {
@@ -47,39 +45,8 @@ public class GameController {
       } else {
         snake.moveSnake(snakeX, snakeY);
       }
-      boardView.showGameBoard(new Cell(snakeX, snakeY),snake.getSnakeBody().size() - 2);
-      console.clearConsole();
-    }
-  }
-
-
-  private Integer getSnakeSpeed() {
-    try {
-      int i = 0;
-      while (true) {
-        i = Integer.parseInt(scanner.nextLine());
-        if (i >= 1 && i <= 3) {
-          break;
-        }
-      }
-      return i;
-    } catch (NumberFormatException e) {
-      return 1;
-    }
-  }
-
-
-  private void stepDelay(int speed) {
-    int snakeSpeed = switch (speed) {
-      case 1 -> SnakeSpeed.SLOW.getSpeed();
-      case 2 -> SnakeSpeed.MEDIUM.getSpeed();
-      case 3 -> SnakeSpeed.FAST.getSpeed();
-      default -> throw new NumberFormatException();
-    };
-    try {
-      Thread.sleep(snakeSpeed);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
+      boardView.showGameBoard(new Cell(snakeX, snakeY), snake.getSnakeBody().size() - 2);
+      clearConsole();
     }
   }
 
@@ -93,6 +60,15 @@ public class GameController {
       return true;
     }
     return false;
+  }
+
+  public void clearConsole() {
+    try {
+      Thread.sleep(250);
+      new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 
