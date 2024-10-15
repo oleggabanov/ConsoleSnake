@@ -18,6 +18,7 @@ public class GameController {
   private KeyboardListener listener = new KeyboardListener();
   private GameBoardView boardView = new GameBoardView(WIDTH, HEIGHT, snake, fruit);
   private GameSpeedController speedController = new GameSpeedController();
+  private ConsoleController consoleController = new ConsoleController();
 
   public void startConsoleSnake() {
     boardView.printGreetingMessage();
@@ -46,10 +47,9 @@ public class GameController {
         snake.moveSnake(snakeX, snakeY);
       }
       boardView.showGameBoard(new Cell(snakeX, snakeY), snake.getSnakeBody().size() - 2);
-      clearConsole();
+      consoleController.clearConsole();
     }
   }
-
 
   private boolean isGameOver(Cell head) {
     boolean isSnakeHitWall = head.x() == 0 || head.y() == 0 || head.x() == WIDTH - 1 || head.y() == HEIGHT - 1;
@@ -61,15 +61,5 @@ public class GameController {
     }
     return false;
   }
-
-  public void clearConsole() {
-    try {
-      Thread.sleep(250);
-      new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
 
 }

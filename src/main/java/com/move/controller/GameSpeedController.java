@@ -21,7 +21,7 @@ public class GameSpeedController {
         }
       }
     } catch (NumberFormatException e) {
-      delay = 1;
+      delay = stepDelay(1);
     }
   }
 
