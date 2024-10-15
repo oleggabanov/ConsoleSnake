@@ -1,4 +1,4 @@
-package com.move.launcher;
+package com.move.controller;
 
 import com.move.model.Cell;
 import com.move.model.enums.SnakeDirection;
@@ -7,12 +7,10 @@ import com.move.model.Snake;
 import com.move.model.enums.SnakeSpeed;
 import com.move.view.ConsolePrinter;
 import lc.kra.system.keyboard.GlobalKeyboardHook;
-import lc.kra.system.keyboard.event.GlobalKeyAdapter;
-import lc.kra.system.keyboard.event.GlobalKeyEvent;
 
 import java.util.*;
 
-public class SnakeLauncher {
+public class GameProcessController {
   private static final int WIDTH = 40;
   private static final int HEIGHT = 12;
   private static final String GREETING_MESSAGE = """
@@ -20,8 +18,10 @@ public class SnakeLauncher {
           
           Rules and gameplay: 
           1. Firstly you need to choose speed of snake: 
-          // 1, 2 or 3 
-          2. Press 'W A S D' buttons to choose snake direction. 
+          >> 1 - SLOW
+          >> 2 - MEDIUM
+          >> 3 - FAST
+          2. Press 'W A S D' buttons to choose snake's head direction 
           3. Press 'Enter' to launch this game!""";
 
   private static final String GAME_OVER = "Game Over!";
@@ -34,8 +34,9 @@ public class SnakeLauncher {
   private SnakeSpeed snakeSpeed = SnakeSpeed.MEDIUM;
   private Snake snake;
   private Fruit fruit;
+  private ConsoleController consoleController = new ConsoleController();
 
-  public SnakeLauncher() {
+  public GameProcessController() {
     this.printer = new ConsolePrinter();
     this.snake = new Snake(WIDTH, HEIGHT);
     this.fruit = new Fruit(random.nextInt(1, WIDTH - 1), random.nextInt(1, HEIGHT - 1));
@@ -44,7 +45,7 @@ public class SnakeLauncher {
   public void startConsoleSnake() {
     printer.printLine(GREETING_MESSAGE);
     int snakeSpeed = getSnakeSpeed();
-    directionListener();
+    consoleController.directionListener();
     while (true) {
 
       snakeSpeed(snakeSpeed);
@@ -70,20 +71,13 @@ public class SnakeLauncher {
       printer.printLine("");
       showGameBoard(new Cell(snakeX, snakeY));
       printer.printLine("Score: " + snake.getSnakeBody().size());
-      clearConsole();
+      consoleController.clearConsole();
     }
 
 
   }
 
-  private static void clearConsole() {
-    try {
-      Thread.sleep(250);
-      new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-    } catch (Exception E) {
-      System.out.println(E);
-    }
-  }
+
 
   private Integer getSnakeSpeed() {
     try {
@@ -115,24 +109,6 @@ public class SnakeLauncher {
     }
   }
 
-
-  private void directionListener() {
-    keyboardHook.addKeyListener(new GlobalKeyAdapter() {
-      @Override
-      public void keyPressed(GlobalKeyEvent event) {
-        char keyChar = event.getKeyChar();
-        snakeDirection = switch (String.valueOf(keyChar).toLowerCase()) {
-          case "w" -> snakeDirection == SnakeDirection.DOWN ? SnakeDirection.DOWN : SnakeDirection.UP;
-          case "a" -> snakeDirection == SnakeDirection.RIGHT ? SnakeDirection.RIGHT : SnakeDirection.LEFT;
-          case "s" -> snakeDirection == SnakeDirection.UP ? SnakeDirection.UP : SnakeDirection.DOWN;
-          case "d" -> snakeDirection == SnakeDirection.LEFT ? SnakeDirection.LEFT : SnakeDirection.RIGHT;
-          default -> {
-            throw new IllegalArgumentException("Illegal argument!");
-          }
-        };
-      }
-    });
-  }
 
   private boolean gameOver(Cell head) {
     if (head.x() == 0 || head.y() == 0 || head.x() == WIDTH - 1 || head.y() == HEIGHT - 1) {
