@@ -13,4 +13,5 @@ public enum SnakeDirection {
   public int getDirection() {
     return direction;
   }
+
 }

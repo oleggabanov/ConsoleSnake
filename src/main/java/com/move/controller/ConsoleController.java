@@ -8,14 +8,19 @@ import lc.kra.system.keyboard.event.GlobalKeyEvent;
 public class ConsoleController {
 
   private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook();
-  private SnakeDirection snakeDirection = SnakeDirection.RIGHT;
+  private SnakeDirection snakeDirection;
+
+  public ConsoleController() {
+    snakeDirection = SnakeDirection.RIGHT;
+  }
+
 
   public void clearConsole() {
     try {
       Thread.sleep(250);
       new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-    } catch (Exception E) {
-      System.out.println(E);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 
@@ -30,13 +35,14 @@ public class ConsoleController {
           case "a" -> snakeDirection == SnakeDirection.RIGHT ? SnakeDirection.RIGHT : SnakeDirection.LEFT;
           case "s" -> snakeDirection == SnakeDirection.UP ? SnakeDirection.UP : SnakeDirection.DOWN;
           case "d" -> snakeDirection == SnakeDirection.LEFT ? SnakeDirection.LEFT : SnakeDirection.RIGHT;
-          default -> {
-            throw new IllegalArgumentException("Illegal argument!");
-          }
+          default -> throw new IllegalArgumentException("Console Illegal argument!");
         };
       }
     });
   }
 
 
+  public int getDirection() {
+    return snakeDirection.getDirection();
+  }
 }

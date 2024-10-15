@@ -1,12 +1,12 @@
 package com.move;
 
-import com.move.controller.GameProcessController;
+import com.move.controller.GameController;
 
 public class Main {
 
   public static void main(String[] args) {
-    GameProcessController gameProcessController = new GameProcessController();
-    gameProcessController.startConsoleSnake();
+    GameController gameController = new GameController();
+    gameController.startConsoleSnake();
   }
 
 }

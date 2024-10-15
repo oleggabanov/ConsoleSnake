@@ -14,7 +14,6 @@ public class Snake {
     snakeBody.add(new Cell(x - 1, y));
   }
 
-
   public List<Cell> getSnakeBody() {
     return snakeBody;
   }
@@ -28,5 +27,6 @@ public class Snake {
   public void expandSnake(int snakeX, int snakeY) {
     snakeBody.add(0, new Cell(snakeX, snakeY));
   }
+
 
 }
