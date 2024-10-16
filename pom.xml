@@ -22,7 +22,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.move.Main</mainClass>
+                            <mainClass>com.move.GameLauncher</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

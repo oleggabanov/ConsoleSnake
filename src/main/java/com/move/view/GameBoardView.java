@@ -1,10 +1,11 @@
 package com.move.view;
 
-import com.move.model.Cell;
-import com.move.model.Fruit;
-import com.move.model.Snake;
+import com.move.model.*;
+
+import static com.move.model.BoardParams.*;
 
 public class GameBoardView implements ConsolePrinter {
+
   private static final String GREETING_MESSAGE = """
           WELCOME T0 THE SNAKE GAME!
           
@@ -20,14 +21,10 @@ public class GameBoardView implements ConsolePrinter {
   private static final String RESTART = "To restart enter '1', otherwise 'Enter' to quit game!";
   private static final String SCORE = "Score: %d";
 
-  private int WIDTH;
-  private int HEIGHT;
   private Snake snake;
   private Fruit fruit;
 
-  public GameBoardView(int width, int height, Snake snake, Fruit fruit) {
-    this.WIDTH = width;
-    this.HEIGHT = height;
+  public GameBoardView(Snake snake, Fruit fruit) {
     this.snake = snake;
     this.fruit = fruit;
   }
@@ -44,10 +41,7 @@ public class GameBoardView implements ConsolePrinter {
     print(RESTART);
   }
 
-  public void printScore(int score) {
-
-  }
-  public void showGameBoard(Cell cell,int score) {
+  public void showGameBoard(Cell cell, int score) {
     printLine("");
     for (int i = 0; i < HEIGHT; i++) {
       for (int j = 0; j < WIDTH; j++) {

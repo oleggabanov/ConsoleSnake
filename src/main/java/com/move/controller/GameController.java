@@ -5,20 +5,21 @@ import com.move.model.Fruit;
 import com.move.model.Snake;
 import com.move.view.GameBoardView;
 
-import java.util.List;
-import java.util.Random;
-
 public class GameController {
 
-  private static final int WIDTH = 40;
-  private static final int HEIGHT = 12;
-  private final Random random = new Random();
-  private Snake snake = new Snake(WIDTH, HEIGHT);
-  private Fruit fruit = new Fruit(random.nextInt(1, WIDTH - 1), random.nextInt(1, HEIGHT - 1));
-  private KeyboardListener listener = new KeyboardListener();
-  private GameBoardView boardView = new GameBoardView(WIDTH, HEIGHT, snake, fruit);
-  private GameSpeedController speedController = new GameSpeedController();
-  private ConsoleController consoleController = new ConsoleController();
+  private final KeyboardListener listener;
+  private final ConsoleController consoleController;
+  private final GameSpeedController speedController = new GameSpeedController();
+  private final FruitController fruitController = new FruitController();
+  private final Snake snake = new Snake();
+  private Fruit fruit = fruitController.spawnFruit();
+  private final GameBoardView boardView = new GameBoardView(snake, fruit);
+  private GameConditionController conditionController = new GameConditionController();
+
+  public GameController(KeyboardListener listener, ConsoleController consoleController) {
+    this.listener = listener;
+    this.consoleController = consoleController;
+  }
 
   public void startConsoleSnake() {
     boardView.printGreetingMessage();
@@ -36,12 +37,13 @@ public class GameController {
         case 4 -> snakeX++;
       }
       boolean isFruitEaten = snakeX == fruit.x() && snakeY == fruit.y();
-      if (isGameOver(new Cell(snakeX, snakeY))) {
+      if (conditionController.isGameOver(new Cell(snakeX, snakeY), snake)) {
+        boardView.printGameOver();
         break;
       }
       if (isFruitEaten) {
         snake.expandSnake(snakeX, snakeY);
-        fruit = new Fruit(random.nextInt(1, WIDTH - 1), random.nextInt(1, HEIGHT - 1));
+        fruit = fruitController.spawnFruit();
         boardView.setFruit(fruit);
       } else {
         snake.moveSnake(snakeX, snakeY);
@@ -51,15 +53,5 @@ public class GameController {
     }
   }
 
-  private boolean isGameOver(Cell head) {
-    boolean isSnakeHitWall = head.x() == 0 || head.y() == 0 || head.x() == WIDTH - 1 || head.y() == HEIGHT - 1;
-    List<Cell> snkBody = snake.getSnakeBody().subList(1, snake.getSnakeBody().size());
-    boolean isSnakeHitItself = snkBody.contains(head);
-    if (isSnakeHitWall || isSnakeHitItself) {
-      boardView.printGameOver();
-      return true;
-    }
-    return false;
-  }
 
 }
