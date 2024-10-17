@@ -29,7 +29,7 @@ public class GameController {
 
   private void initialize() {
     this.snake = new Snake();
-    this.fruit = fruitController.spawnFruit();
+    this.fruit = fruitController.spawnFruit(snake);
     this.boardView = new GameBoardView(snake, fruit);
     this.bestScore = Math.max(bestScore, currentScore);
     this.currentScore = 0;
@@ -63,7 +63,7 @@ public class GameController {
 
         if (isFruitEaten) {
           snake.expandSnake(snakeX, snakeY);
-          fruit = fruitController.spawnFruit();
+          fruit = fruitController.spawnFruit(snake);
           boardView.setFruit(fruit);
           currentScore++;
         } else {
