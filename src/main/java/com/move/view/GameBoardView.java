@@ -17,9 +17,9 @@ public class GameBoardView implements ConsolePrinter {
           2. Press 'W A S D' buttons to choose snake's head direction 
           3. Press 'Enter' to launch this game!""";
 
-  private static final String GAME_OVER = "Game Over!";
-  private static final String RESTART = "To restart enter '1', otherwise 'Enter' to quit game!";
-  private static final String SCORE = "Score: %d";
+  private static final String GAME_OVER = "Game Over!\n";
+  private static final String RESTART = "Wish to continue (y/n)\n";
+  private static final String SCORE = "Score: %d \t Best score: %d";
 
   private Snake snake;
   private Fruit fruit;
@@ -41,7 +41,7 @@ public class GameBoardView implements ConsolePrinter {
     print(RESTART);
   }
 
-  public void showGameBoard(Cell cell, int score) {
+  public void showGameBoard(Cell cell, int score,int bestScore) {
     printLine("");
     for (int i = 0; i < HEIGHT; i++) {
       for (int j = 0; j < WIDTH; j++) {
@@ -63,8 +63,7 @@ public class GameBoardView implements ConsolePrinter {
       }
       printLine("");
     }
-    printLine("");
-    printLine(String.format(SCORE, score));
+    printLine(String.format(SCORE, score, bestScore));
   }
 
   public void setFruit(Fruit fruit) {

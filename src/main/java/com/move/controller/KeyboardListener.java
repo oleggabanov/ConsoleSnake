@@ -25,7 +25,7 @@ public class KeyboardListener {
           case "a" -> snakeDirection == SnakeDirection.RIGHT ? SnakeDirection.RIGHT : SnakeDirection.LEFT;
           case "s" -> snakeDirection == SnakeDirection.UP ? SnakeDirection.UP : SnakeDirection.DOWN;
           case "d" -> snakeDirection == SnakeDirection.LEFT ? SnakeDirection.LEFT : SnakeDirection.RIGHT;
-          default -> throw new IllegalArgumentException("Console Illegal argument!");
+          default -> snakeDirection;
         };
       }
     });
