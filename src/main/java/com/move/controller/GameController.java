@@ -33,13 +33,15 @@ public class GameController {
     this.boardView = new GameBoardView(snake, fruit);
     this.bestScore = Math.max(bestScore, currentScore);
     this.currentScore = 0;
+    conditionController.setRestart(false);
+    startConsoleSnake();
   }
 
   public void startConsoleSnake() {
     boardView.printGreetingMessage();
     speedController.getSnakeSpeed();
     listener.directionListener();
-    while (true) {
+
       while (true) {
         speedController.delay();
         Cell head = snake.getSnakeBody().get(0);
@@ -55,9 +57,10 @@ public class GameController {
         if (conditionController.isGameOver(new Cell(snakeX, snakeY), snake)) {
           boardView.printGameOver();
           boardView.printRestart();
-          conditionController.setRestart(scanner.nextLine());
+          conditionController.setRestart(scanner.nextLine().toLowerCase().lastIndexOf('y') != -1);
           break;
         }
+
         if (isFruitEaten) {
           snake.expandSnake(snakeX, snakeY);
           fruit = fruitController.spawnFruit();
@@ -69,11 +72,12 @@ public class GameController {
         boardView.showGameBoard(new Cell(snakeX, snakeY), currentScore, bestScore);
         consoleController.clearConsole();
       }
+
       if (conditionController.isRestart()) {
         initialize();
       } else {
         System.exit(0);
       }
     }
-  }
+
 }

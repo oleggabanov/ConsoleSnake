@@ -14,4 +14,6 @@ public class FruitController {
     return new Fruit(random.nextInt(1, WIDTH - 1), random.nextInt(1, HEIGHT - 1));
   }
 
+  //width height        ooooo
+
 }

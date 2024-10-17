@@ -4,7 +4,6 @@ import com.move.model.Cell;
 import com.move.model.Snake;
 
 import java.util.List;
-import java.util.Scanner;
 
 import static com.move.model.BoardParams.*;
 
@@ -26,10 +25,8 @@ public class GameConditionController {
     return isRestart;
   }
 
-  public void setRestart(String command) {
-    if (command.toLowerCase().lastIndexOf('y') != -1) {
-      isRestart = true;
-    }
+  public void setRestart(boolean restart) {
+    this.isRestart = restart;
   }
 
 
