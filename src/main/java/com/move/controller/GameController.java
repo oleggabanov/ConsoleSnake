@@ -10,7 +10,6 @@ import java.util.Scanner;
 public class GameController {
 
   private KeyboardListener listener;
-  private final ConsoleController consoleController;
   private final GameSpeedController speedController = new GameSpeedController();
   private final FruitController fruitController = new FruitController();
   private Snake snake;
@@ -21,9 +20,8 @@ public class GameController {
   private int bestScore;
   private int currentScore;
 
-  public GameController(KeyboardListener listener, ConsoleController consoleController) {
+  public GameController(KeyboardListener listener) {
     this.listener = listener;
-    this.consoleController = consoleController;
     initialize();
   }
 
@@ -70,7 +68,6 @@ public class GameController {
           snake.moveSnake(snakeX, snakeY);
         }
         boardView.showGameBoard(new Cell(snakeX, snakeY), currentScore, bestScore);
-        consoleController.clearConsole();
       }
 
       if (conditionController.isRestart()) {
