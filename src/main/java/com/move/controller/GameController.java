@@ -4,21 +4,23 @@ import com.move.model.Cell;
 import com.move.model.Fruit;
 import com.move.model.Snake;
 import com.move.view.GameBoardView;
+import lc.kra.system.keyboard.GlobalKeyboardHook;
 
 import java.util.Scanner;
 
 public class GameController {
 
   private KeyboardListener listener;
+  private GlobalKeyboardHook hook = new GlobalKeyboardHook();
+  private final GameConditionController conditionController = new GameConditionController();
   private final GameSpeedController speedController = new GameSpeedController();
   private final FruitController fruitController = new FruitController();
+  private Scanner scanner = new Scanner(System.in);
   private Snake snake;
   private Fruit fruit;
-  private GameBoardView boardView;
-  private final GameConditionController conditionController = new GameConditionController();
-  private Scanner scanner = new Scanner(System.in);
   private int bestScore;
   private int currentScore;
+  private GameBoardView boardView;
 
   public GameController(KeyboardListener listener) {
     this.listener = listener;
@@ -31,17 +33,33 @@ public class GameController {
     this.boardView = new GameBoardView(snake, fruit);
     this.bestScore = Math.max(bestScore, currentScore);
     this.currentScore = 0;
+    boardView.setGameSpeedController(speedController);
     conditionController.setRestart(false);
+    listener.setKeyboardHook(hook);
+    speedController.setKeyboardHook(hook);
     startConsoleSnake();
   }
 
   public void startConsoleSnake() {
-    boardView.printGreetingMessage();
-    speedController.getSnakeSpeed();
-    listener.directionListener();
+    speedController.setRunning(true);
+    while (speedController.isRunning()) {
+      boardView.printMenu();
+      speedController.menuConfigurationListener();
+      try {
+        Thread.sleep(200);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }
 
-      while (true) {
-        speedController.delay();
+
+    while (true) {
+
+      System.out.println(listener.getDirection());
+      listener.directionListener();
+
+
+      speedController.delay();
         Cell head = snake.getSnakeBody().get(0);
         int snakeX = head.x();
         int snakeY = head.y();

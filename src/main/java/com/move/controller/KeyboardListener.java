@@ -7,9 +7,12 @@ import lc.kra.system.keyboard.event.GlobalKeyEvent;
 
 public class KeyboardListener {
 
-  private final GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook();
-
+  private GlobalKeyboardHook keyboardHook;
   private SnakeDirection snakeDirection;
+
+  public void setKeyboardHook(GlobalKeyboardHook keyboardHook) {
+    this.keyboardHook = keyboardHook;
+  }
 
   public KeyboardListener() {
     snakeDirection = SnakeDirection.RIGHT;
