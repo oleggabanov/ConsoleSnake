@@ -42,23 +42,14 @@ public class GameController {
 
   public void startConsoleSnake() {
     speedController.setRunning(true);
-    while (speedController.isRunning()) {
+    if (speedController.isRunning()) {
       boardView.printMenu();
       speedController.menuConfigurationListener();
-      try {
-        Thread.sleep(200);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
     }
 
-
     while (true) {
-
-      System.out.println(listener.getDirection());
+      System.out.println(speedController.getSpeed());
       listener.directionListener();
-
-
       speedController.delay();
         Cell head = snake.getSnakeBody().get(0);
         int snakeX = head.x();

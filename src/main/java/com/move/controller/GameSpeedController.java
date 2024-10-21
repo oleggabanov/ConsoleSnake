@@ -11,8 +11,11 @@ public class GameSpeedController {
 
   private GlobalKeyboardHook keyboardHook;
   private SnakeSpeed snakeSpeed;
-  private int delay;
   private int menuItemIndex;
+
+  public SnakeSpeed getSpeed() {
+    return snakeSpeed;
+  }
 
   public GameSpeedController() {
     this.snakeSpeed = SnakeSpeed.MEDIUM;
@@ -33,11 +36,7 @@ public class GameSpeedController {
   public int getMenuItemIndex() {
     return menuItemIndex;
   }
-
-  public void setMenuItemIndex(int menuItemIndex) {
-    this.menuItemIndex = menuItemIndex;
-  }
-
+  
   private boolean running;
 
   public void menuConfigurationListener() {
@@ -52,7 +51,7 @@ public class GameSpeedController {
             menuItemIndex = menuItemIndex < menu.length - 1 ? menuItemIndex + 1 : 0;
             break;
           case GlobalKeyEvent.VK_RETURN:
-            getSnakeSpeed();
+            snakeSpeed = getSnakeSpeed();
             running = false;
             break;
           case GlobalKeyEvent.VK_ESCAPE:
@@ -60,43 +59,18 @@ public class GameSpeedController {
             break;
         }
       }
-
       @Override
       public void keyReleased(GlobalKeyEvent globalKeyEvent) {
 
-      }
-    });
-//    gameBoardView.printMenu();
-
-//    keyboardHook.shutdownHook();
+      }});
   }
 
-
-
-  public void getSnakeSpeed() {
-    try {
-      int i = 0;
-      while (true) {
-        i = menuItemIndex;
-        if (i >= 0 && i <= 2) {
-          delay = stepDelay(i);
-          break;
-        }
-      }
-    } catch (NumberFormatException e) {
-      delay = stepDelay(1);
-    }
-  }
-
-
-
-  private int stepDelay(int speed) {
-    return switch (speed) {
-      case 0 -> SnakeSpeed.SLOW.getSpeed();
-      case 1 -> SnakeSpeed.MEDIUM.getSpeed();
-      case 2 -> SnakeSpeed.FAST.getSpeed();
-      default -> throw new NumberFormatException();
-    };
+  private SnakeSpeed getSnakeSpeed() {
+      return switch (menuItemIndex) {
+        case 0 -> SnakeSpeed.SLOW;
+        case 2 -> SnakeSpeed.FAST;
+        default -> SnakeSpeed.MEDIUM;
+      };
   }
 
   public void delay() {
