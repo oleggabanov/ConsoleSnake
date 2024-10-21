@@ -36,7 +36,7 @@ public class GameSpeedController {
   public int getMenuItemIndex() {
     return menuItemIndex;
   }
-  
+
   private boolean running;
 
   public void menuConfigurationListener() {
@@ -59,18 +59,27 @@ public class GameSpeedController {
             break;
         }
       }
+
       @Override
       public void keyReleased(GlobalKeyEvent globalKeyEvent) {
 
-      }});
+      }
+    });
+    while (isRunning()) {
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   private SnakeSpeed getSnakeSpeed() {
-      return switch (menuItemIndex) {
-        case 0 -> SnakeSpeed.SLOW;
-        case 2 -> SnakeSpeed.FAST;
-        default -> SnakeSpeed.MEDIUM;
-      };
+    return switch (menuItemIndex) {
+      case 0 -> SnakeSpeed.SLOW;
+      case 2 -> SnakeSpeed.FAST;
+      default -> SnakeSpeed.MEDIUM;
+    };
   }
 
   public void delay() {

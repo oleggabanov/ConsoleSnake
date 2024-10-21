@@ -37,16 +37,18 @@ public class GameController {
     conditionController.setRestart(false);
     listener.setKeyboardHook(hook);
     speedController.setKeyboardHook(hook);
+    speedController.menuConfigurationListener();
+    speedController.setRunning(true);
+    while (speedController.isRunning()) {
+      boardView.printMenu();
+    }
     startConsoleSnake();
   }
 
-  public void startConsoleSnake() {
-    speedController.setRunning(true);
-    if (speedController.isRunning()) {
-      boardView.printMenu();
-      speedController.menuConfigurationListener();
-    }
 
+
+
+  public void startConsoleSnake() {
     while (true) {
       System.out.println(speedController.getSpeed());
       listener.directionListener();
